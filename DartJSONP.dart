@@ -17,6 +17,9 @@ class JsonpCallback {
   /// This is the name that you will provide to your json request url
   /// and it will be injected into the dom as a javscript callback function
   /// once the callback is received, the function will be removed.
+  ///
+  /// IMPORTANT:  Make sure that you don't have two callback functions
+  /// with the same name.
   JsonpCallback(String this._callbackFunctionName) {
     _script = new Element.tag("script");
 

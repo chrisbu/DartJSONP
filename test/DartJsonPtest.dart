@@ -1,39 +1,34 @@
 #import('dart:html');
-#import("DartJSONP.dart");
+#import("../DartJSONP.dart");
 
 void main() {
-  final gplusApiKey = "AIzaSyDQkKqW-XrUakARo-96vHh1oBbWv50udL4";
+  final gplusApiKey = "AIzaSyDQkKqW-XrUakARo-96vHh1oBbWv50udL4"; // localhost
 
+  // create the callback for Google Plus
   JsonpCallback gplusCallback = new JsonpCallback("gplusFunction");
-  gplusCallback.onDataReceived = _onGPlusDataReceived;
+  gplusCallback.onDataReceived = _onGPlusDataReceived; // layout the returned data
 
-
+  // create the callback for Twitter
   JsonpCallback twitterCallback = new JsonpCallback("twitterFunction");
-  twitterCallback.onDataReceived = _onTwitterDataReceived;
+  twitterCallback.onDataReceived = _onTwitterDataReceived; // layout the returned data
 
 
   document.body.query("#searchButton").on.click.add((event) {
     var searchText = getSearchText();
 
+    // build the url's
     var gplusUrl = "https://www.googleapis.com/plus/v1/activities?query=$searchText&pp=1&key=$gplusApiKey&callback=${gplusCallback.callbackFunctionName}";
-    gplusCallback.doCallback(gplusUrl);
-
     var twitterUrl = "http://search.twitter.com/search.json?q=$searchText&callback=${twitterCallback.callbackFunctionName}";
+
+    // do the JSONP callback
+    gplusCallback.doCallback(gplusUrl);
     twitterCallback.doCallback(twitterUrl);
   });
 
 }
 
 
-getSearchText() {
-  var searchText = document.query("#searchText").value;
-  print(searchText);
-  if (searchText.startsWith("#")) {
-    searchText = "%23" + searchText.substring(1);
-  }
 
-  return searchText;
-}
 
 
 _onTwitterDataReceived(Map data) {
@@ -82,4 +77,15 @@ Element buildUiElement(String title, String user, String url, String image, [Str
 """);
 
    return element;
+}
+
+
+getSearchText() {
+  var searchText = document.query("#searchText").value;
+  print(searchText);
+  if (searchText.startsWith("#")) {
+    searchText = "%23" + searchText.substring(1);
+  }
+
+  return searchText;
 }
