@@ -14,5 +14,5 @@ For example:
       // do something with the returned data
     };
     
-    var twitterUrl = "http://search.twitter.com/search.json?q=dartlang&callback=" + callbackFuncName;
+    var twitterUrl = "http://search.twitter.com/search.json?q=dartlang&callback=$callbackFuncName";
     twitterCallback.doCallback(twitterUrl);
