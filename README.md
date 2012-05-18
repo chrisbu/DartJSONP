@@ -21,6 +21,8 @@ For example:
     twitterCallback.doCallback(twitterUrl);
     
     
+You can see this running here:  http://example.dartwatch.com/jsonp/DartJsonPtest.html
+
 Internally, it adds the javascript, performs the request and when
 the callback is received by javascript and forwarded back to dart, it removes the 
 scripts (as best it can), to clean up after itself.
