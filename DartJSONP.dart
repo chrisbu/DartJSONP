@@ -86,7 +86,7 @@ class JsonpCallback {
     document.body.elements.addLast(_script); //add the jsonp callback javascript
 
     //create the script that will invoke the JSON call
-    var script = new Element.tag("script");
+    ScriptElement script = new Element.tag("script");
     script.src = url;
 
     // add and remove it is enough
