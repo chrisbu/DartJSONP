@@ -6,7 +6,9 @@ void main() {
 
   // create the callback for Google Plus
   JsonpCallback gplusCallback = new JsonpCallback("gplusFunction");
-  gplusCallback.onDataReceived = _onGPlusDataReceived; // layout the returned data
+
+  // you can use a callback, or the doCallback() function returns a future
+
 
   // create the callback for Twitter
   JsonpCallback twitterCallback = new JsonpCallback("twitterFunction");
@@ -21,7 +23,12 @@ void main() {
     var twitterUrl = "http://search.twitter.com/search.json?q=$searchText&callback=${twitterCallback.callbackFunctionName}";
 
     // do the JSONP callback
-    gplusCallback.doCallback(gplusUrl);
+
+    // the gPlus version uses a future
+    Future<Map> gplusFuture = gplusCallback.doCallback(gplusUrl);
+    gplusFuture.then(_onGPlusDataReceived);
+
+    // the twitter uses the callback
     twitterCallback.doCallback(twitterUrl);
   });
 
@@ -84,7 +91,7 @@ getSearchText() {
   var searchText = document.query("#searchText").value;
   print(searchText);
   if (searchText.startsWith("#")) {
-    searchText = "%23" + searchText.substring(1);
+    searchText = "%23${searchText.substring(1)}";
   }
 
   return searchText;

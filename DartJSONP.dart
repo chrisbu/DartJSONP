@@ -43,13 +43,14 @@ class JsonpCallback {
   /// from the dom yet
   _removeScriptText() {
     _script.text = "";
+    _script.remove();
   }
 
   /// Performs JSON request to the [url].
   /// The url must contain the callback function name that was
   /// passed in on the constructor
   //  eg: http://example.com/query?callback=myJsCallback
-  doCallback(String url, [OnDataHandler onData]) {
+  Future<Map> doCallback(String url, [OnDataHandler onData]) {
     if (url.contains(this._callbackFunctionName) == false) {
       throw "callback url must contain the callback function name!";
     }
@@ -58,23 +59,26 @@ class JsonpCallback {
       this.onDataReceived = onData;
     }
 
-
-    if (this.onDataReceived == null) {
-      throw "onData callback must either be setup in advance, or passed into this method";
-    }
+    var completer = new Completer<Map>();
 
     _onMessage = (MessageEvent event) {
       String s = event.data;
       Map json = JSON.parse(s);
 
       if (json["requestName"] == _callbackFunctionName) {
-        //if this is the correct handler, then remove the handler and
-        // call teh onDataReceived callback
+        // if this is the correct handler, then remove the handler and
+        // call the onDataReceived callback and return a future
         window.on.message.remove(_onMessage);
         _removeScriptText();
         Map result = json["jsonpData"];
-        //JsonObject jsonObject= new JsonObject.fromMap();
-        onDataReceived(result);
+
+        // if we have a callback handler, then use it
+        if (onDataReceived != null) {
+         onDataReceived(result);
+        }
+
+        // also return a future
+        completer.complete(result);
       }
     };
 
@@ -92,6 +96,8 @@ class JsonpCallback {
     // add and remove it is enough
     document.body.elements.addLast(script);
     document.body.elements.removeLast(); //remove the script which initiates the call
+
+    return completer.future;
   }
 
   OnDataHandler onDataReceived;
