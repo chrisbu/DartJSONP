@@ -1,5 +1,7 @@
 **DartJSONP**
 
+Last tested working (Dartium, JS) with build 8942
+
 (Created at the London Dart hackathon)
 
 Inspired by Seth's blog post which explained how to use JSONP and postmessage with Dart:
@@ -7,9 +9,9 @@ http://blog.sethladd.com/2012/03/jsonp-with-dart.
 
 
 Allow easy JSONP data access without the fuss by injecting and removing
-a javascript callback function and a dart postmessage handler function
+a javascript callback function or Future<Map> and a dart postmessage handler function
 
-For example:
+For example (with callback):
 
     var callbackFuncName = "twitterFunction";
     JsonpCallback twitterCallback = new JsonpCallback(callbackFuncName);
@@ -19,6 +21,16 @@ For example:
     
     var twitterUrl = "http://search.twitter.com/search.json?q=dartlang&callback=$callbackFuncName";
     twitterCallback.doCallback(twitterUrl);
+    
+For example (with Future):
+
+   var callbackFuncName = "twitterFunction";
+    JsonpCallback twitterCallback = new JsonpCallback(callbackFuncName);
+    
+    var twitterUrl = "http://search.twitter.com/search.json?q=dartlang&callback=$callbackFuncName";
+    twitterCallback.doCallback(twitterUrl).then((Map data) {
+      // do something with the returned data
+    });
     
     
 You can see this running here:  http://example.dartwatch.com/jsonp/DartJsonPtest.html
