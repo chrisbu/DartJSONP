@@ -24,7 +24,7 @@ For example (with callback):
     
 For example (with Future):
 
-   var callbackFuncName = "twitterFunction";
+    var callbackFuncName = "twitterFunction";
     JsonpCallback twitterCallback = new JsonpCallback(callbackFuncName);
     
     var twitterUrl = "http://search.twitter.com/search.json?q=dartlang&callback=$callbackFuncName";
