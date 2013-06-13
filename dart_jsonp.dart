@@ -1,7 +1,8 @@
-#library("DartJSONP");
+library dart_jsonp;
 
-#import("dart:html");
-#import("dart:json");
+import 'dart:html';
+import 'dart:json';
+import 'dart:async';
 
 typedef void OnDataHandler(Map jsonObject);
 
@@ -9,9 +10,10 @@ typedef void OnDataHandler(Map jsonObject);
 /// a javascript callback function and a dart postmessage handler function
 class JsonpCallback {
   String _callbackFunctionName;
-  String get callbackFunctionName() => _callbackFunctionName;
+  String get callbackFunctionName => _callbackFunctionName;
   ScriptElement _script;
   var  _onMessage;
+  var _onMessageSub;
 
   /// constructor - the [_callbackFunctionName] is mandatory.
   /// This is the name that you will provide to your json request url
@@ -63,12 +65,12 @@ class JsonpCallback {
 
     _onMessage = (MessageEvent event) {
       String s = event.data;
-      Map json = JSON.parse(s);
+      Map json = parse(s);
 
       if (json["requestName"] == _callbackFunctionName) {
         // if this is the correct handler, then remove the handler and
         // call the onDataReceived callback and return a future
-        window.on.message.remove(_onMessage);
+        _onMessageSub.cancel();
         _removeScriptText();
         Map result = json["jsonpData"];
 
@@ -83,23 +85,23 @@ class JsonpCallback {
     };
 
     //add the dart onMessage handler
-    window.on.message.add(_onMessage);
+    _onMessageSub = window.onMessage.listen(_onMessage);
 
     //add the correct text back into the JavaScript handler
     _addScriptText();
-    document.body.elements.addLast(_script); //add the jsonp callback javascript
+    document.body.nodes.add(_script); //add the jsonp callback javascript
 
     //create the script that will invoke the JSON call
     ScriptElement script = new Element.tag("script");
     script.src = url;
 
     // add and remove it is enough
-    document.body.elements.addLast(script);
-    document.body.elements.removeLast(); //remove the script which initiates the call
+    document.body.nodes.add(script);
+    document.body.nodes.removeLast(); //remove the script which initiates the call
 
     return completer.future;
   }
 
   OnDataHandler onDataReceived;
+  
 }
-
